@@ -92,9 +92,18 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
     const now = s.start + TK.player.state.off;
     if (Math.abs(now - t2) > 0.05) throw new Error('位置变化 ' + (now - t2).toFixed(2) + 's');
   });
-  step('暂停遮罩出现，含复制按钮', () => {
-    if (d.querySelector('#pause').hidden) throw new Error('无遮罩');
+  step('暂停卡片出现，含复制按钮', () => {
+    if (d.querySelector('#pause').hidden) throw new Error('无暂停卡');
     if (!d.querySelector('#pCopy')) throw new Error('无复制按钮');
+  });
+  step('暂停中打开讲义不会自动继续播放', () => {
+    d.querySelector('#pSheet').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    if (!TK.paused()) throw new Error('打开讲义时被恢复播放');
+    if (d.querySelector('#sheet').hidden) throw new Error('讲义未打开');
+    if (!d.querySelector('#pause').hidden) throw new Error('暂停卡应让位给讲义');
+    d.querySelector('#sheetX').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    if (!TK.paused()) throw new Error('关闭讲义后被恢复播放');
+    if (d.querySelector('#pause').hidden) throw new Error('关闭讲义后未回到暂停卡');
   });
   TK.player.toggle();
 

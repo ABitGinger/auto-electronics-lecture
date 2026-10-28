@@ -257,12 +257,15 @@
 
   function next() {
     if (ST.i >= TK.segs.length - 1) return finish();
-    enter(ST.i + 1, 0, true);
+    var keep = TK.paused();
+    enter(ST.i + 1, 0, !keep);
+    if (keep) $('#pause').hidden = false;
   }
   function prev() {
-    var seg = TK.segs[ST.i];
-    if (ST.off > 2.2) return enter(ST.i, 0, ST.playing);
-    if (ST.i > 0) enter(ST.i - 1, 0, ST.playing);
+    var keep = TK.paused();
+    var target = ST.off > 2.2 ? ST.i : Math.max(0, ST.i - 1);
+    enter(target, 0, !keep);
+    if (keep) $('#pause').hidden = false;
   }
 
   function curT() {
@@ -470,6 +473,11 @@
     TK.showCopy('复制本讲 · ' + L.id + ' ' + L.title, lessonText(L));
   }
 
+  function closeSheet() {
+    $('#sheet').hidden = true;
+    if (TK.paused() && ST.started) $('#pause').hidden = false;
+  }
+
   function openSheet() {
     var L = lessonOf(ST.i);
     $('#sheetTitle').textContent = '讲义 · ' + L.id + ' ' + L.title;
@@ -562,7 +570,7 @@
       TK.toast('语速 ' + this.textContent);
     });
     $('#btnSheet').addEventListener('click', openSheet);
-    $('#sheetX').addEventListener('click', function () { $('#sheet').hidden = true; });
+    $('#sheetX').addEventListener('click', closeSheet);
     $('#sheetCopy').addEventListener('click', copyLesson);
     $('#btnCopy').addEventListener('click', copyLesson);
     $('#btnSide').addEventListener('click', function () {
@@ -572,7 +580,7 @@
     });
     $('#pResume').addEventListener('click', togglePause);
     $('#pCopy').addEventListener('click', copyLesson);
-    $('#pSheet').addEventListener('click', function () { $('#pause').hidden = true; TK.setPaused(false); play(); openSheet(); });
+    $('#pSheet').addEventListener('click', function () { $('#pause').hidden = true; openSheet(); });
     $('#menuX').addEventListener('click', function () { $('#menu').hidden = true; });
     $('#btnExam2').addEventListener('click', function () { location.hash = '#/exam'; });
     if (S.muted) { $('#btnMute').textContent = '🔇'; $('#btnMute').classList.add('off'); }
@@ -591,7 +599,7 @@
       else if (e.key.toLowerCase() === 'm') { openMenu(); }
       else if (e.key.toLowerCase() === 'n') { $('#btnMute').click(); }
       else if (e.key.toLowerCase() === 'p') { $('#btnSpeed').click(); }
-      else if (e.key === 'Escape') { $('#sheet').hidden = true; $('#menu').hidden = true; $('#modal').hidden = true; }
+      else if (e.key === 'Escape') { closeSheet(); $('#menu').hidden = true; $('#modal').hidden = true; }
       else if (/^[1-4]$/.test(e.key)) {
         var seg = TK.segs[ST.i];
         if (seg && seg.k === 'qte' && !ST.answer) answer(+e.key - 1, false);

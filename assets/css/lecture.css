@@ -87,10 +87,10 @@ b{font-weight:700}
 /* ---------------- 主区 ---------------- */
 .arena{position:relative;display:grid;grid-template-columns:0 1fr;transition:grid-template-columns .22s;min-height:0}
 .arena.open{grid-template-columns:262px 1fr}
-.side{overflow:hidden auto;border-right:1px solid var(--line);padding:0;background:rgba(10,16,24,.55)}
+.side{grid-column:1;grid-row:1;overflow:hidden auto;border-right:1px solid var(--line);padding:0;background:rgba(10,16,24,.55)}
 .side::-webkit-scrollbar,.deck::-webkit-scrollbar{width:8px}
 .side::-webkit-scrollbar-thumb,.deck::-webkit-scrollbar-thumb{background:#1e2a39;border-radius:99px}
-.arena:not(.open) .side{display:none}
+.arena:not(.open) .side{visibility:hidden}
 .side-in{padding:14px 12px 40px}
 .side h4{margin:14px 6px 8px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim2);font-weight:600}
 .les{display:flex;gap:8px;align-items:flex-start;padding:8px 9px;border-radius:8px;cursor:pointer;color:var(--ink2);
@@ -103,7 +103,7 @@ b{font-weight:700}
 .les .ok{color:var(--gr);font-size:11px}
 
 /* ---------------- 幻灯片 ---------------- */
-.deck{position:relative;overflow:hidden;min-width:0}
+.deck{grid-column:2;grid-row:1;position:relative;overflow:hidden;min-width:0}
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:clamp(20px,3.4vh,40px) clamp(22px,4.4vw,74px) 104px;
   animation:slideIn .42s cubic-bezier(.2,.7,.25,1)}
 @keyframes slideIn{from{transform:translateY(14px)}to{transform:none}}
@@ -226,14 +226,19 @@ b{font-weight:700}
 .btn.sm{padding:5px 11px;font-size:12px;border-radius:7px}
 
 /* ---------------- 暂停 ---------------- */
-.pause{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(4,8,13,.78);backdrop-filter:blur(8px)}
-.pause-card{width:min(560px,92vw);background:linear-gradient(180deg,#0f1723,#0b111a);border:1px solid var(--line2);
-  border-radius:16px;padding:28px 28px 22px;box-shadow:0 30px 90px -30px #000}
+.pause{position:fixed;inset:0;z-index:80;pointer-events:none;display:flex;align-items:flex-end;justify-content:flex-end;
+  padding:0 18px calc(66px + env(safe-area-inset-bottom));background:transparent}
+.pause-card{pointer-events:auto;width:min(430px,94vw);background:rgba(12,18,27,.97);border:1px solid var(--line2);
+  border-radius:14px;padding:13px 15px 11px;box-shadow:0 26px 70px -24px #000,0 0 0 1px rgba(255,255,255,.03) inset;
+  backdrop-filter:blur(12px);animation:pauseIn .2s ease-out}
+@keyframes pauseIn{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
 .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:var(--cy)}
-.pause-card h2{margin:8px 0 8px;font-size:26px}
-.pause-sub{margin:0 0 20px;color:var(--dim);font-size:13.5px;line-height:1.7}
-.pause-acts{display:flex;gap:9px;flex-wrap:wrap}
-.pause-note{margin:18px 0 0;font-size:11.5px;color:var(--dim2);line-height:1.7}
+.pause-card .eyebrow{font-size:9.5px;letter-spacing:.24em}
+.pause-card h2{margin:5px 0 3px;font-size:17px}
+.pause-sub{margin:0 0 11px;color:var(--dim);font-size:11.5px;line-height:1.55}
+.pause-acts{display:flex;gap:6px;flex-wrap:wrap}
+.pause-acts .btn{padding:7px 11px;font-size:12px;border-radius:8px}
+.pause-note{margin:9px 0 0;font-size:10px;color:var(--dim2);line-height:1.55}
 
 /* ---------------- 讲义 / 目录 / 复制 ---------------- */
 .sheet,.menu,.modal{position:fixed;inset:0;z-index:85;display:grid;place-items:center;background:rgba(4,8,13,.72);backdrop-filter:blur(6px)}
@@ -348,6 +353,7 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
   #barCount{display:none}
   .arena{grid-template-columns:1fr!important}
   .side{display:none!important}
+  .deck{grid-column:1}
   .deck{overflow:hidden}
   .slide{padding:12px 15px 6px;display:flex;flex-direction:column;overflow:hidden}
   .s-body{flex:0 1 auto;min-height:0;margin:auto 0;align-content:center;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
@@ -399,10 +405,14 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
   .sheet-card,.menu-card,.modal-card{width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border:0}
   .sheet-body,.menu-body{padding:6px 14px calc(24px + env(safe-area-inset-bottom))}
   #modalText{min-height:0;flex:1;margin:10px 12px 0;font-size:11.5px}
-  .pause-card{width:92vw;padding:22px 20px 18px}
-  .pause-card h2{font-size:22px}
-  .pause-acts{gap:8px}
-  .pause-acts .btn{flex:1 1 46%;padding:11px 10px;font-size:13px}
+  /* 暂停：底部一条细栏，正文与字幕上移让位 */
+  body.is-paused .slide{padding-bottom:58px}
+  .pause{justify-content:center;padding:0 10px calc(58px + env(safe-area-inset-bottom))}
+  .pause-card{width:100%;display:flex;align-items:center;gap:8px;padding:7px 9px}
+  .pause-card .eyebrow,.pause-card .pause-sub,.pause-card .pause-note{display:none}
+  .pause-card h2{margin:0;font-size:12px;color:var(--dim);font-weight:600;flex:none;letter-spacing:.02em}
+  .pause-acts{flex:1;display:flex;gap:6px}
+  .pause-acts .btn{flex:1;padding:9px 6px;font-size:12px;border-radius:7px;white-space:nowrap}
   .boot-in{width:92vw}
   .boot h1{font-size:44px}
   .boot-sub{font-size:13.5px;margin-bottom:18px}

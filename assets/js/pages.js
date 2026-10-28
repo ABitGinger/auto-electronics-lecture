@@ -334,6 +334,11 @@
         if (demo === 'overview') location.hash = '#/overview';
         if (demo === 'pause') setTimeout(function () { TK.player.toggle(); }, 500);
         if (demo === 'sheet') setTimeout(function () { TK.player.openSheet(); }, 500);
+        if (demo === 'noside') setTimeout(function () { document.querySelector('#btnSide').click(); }, 600);
+        if (demo === 'pausesheet') setTimeout(function () {
+          TK.player.toggle();
+          setTimeout(function () { document.querySelector('#pSheet').click(); }, 200);
+        }, 600);
         if (demo === 'menu') setTimeout(function () { TK.player.openMenu(); }, 500);
       }, 400);
       return;

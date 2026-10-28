@@ -52,8 +52,8 @@
 </style>
 
 <!-- 主样式异步加载：不阻塞首帧（内联关键样式已覆盖加载页） -->
-<link rel="stylesheet" href="assets/css/lecture.css?v=20261028b" media="print" onload="this.media='all'" />
-<noscript><link rel="stylesheet" href="assets/css/lecture.css?v=20261028b" /></noscript>
+<link rel="stylesheet" href="assets/css/lecture.css?v=20261028c" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="assets/css/lecture.css?v=20261028c" /></noscript>
 </head>
 <body>
 
@@ -135,13 +135,12 @@
   <div class="pause-card">
     <div class="eyebrow">PAUSED</div>
     <h2>已暂停</h2>
-    <p class="pause-sub">配音、字幕、答题倒计时全部冻结，回来继续就行。</p>
+    <p class="pause-sub">配音与倒计时已冻结，可以慢慢读这一页。</p>
     <div class="pause-acts">
-      <button class="btn primary" id="pResume">继续播放（空格）</button>
-      <button class="btn" id="pCopy">⧉ 复制本讲为文本</button>
+      <button class="btn primary" id="pResume">继续播放</button>
+      <button class="btn" id="pCopy">⧉ 复制本讲</button>
       <button class="btn ghost" id="pSheet">看讲义</button>
     </div>
-    <p class="pause-note">复制内容＝本讲全部旁白、要点、图的文字描述、课中提问与例题答案，可整段粘给外部 AI 提问。</p>
   </div>
 </div>
 
@@ -219,16 +218,16 @@ window.TK = { bank: [], figs: {}, course: [], timing: {}, examObj: {} };
 })();
 </script>
 
-<script defer src="data/bank.js?v=20261028b" onload="__ld('题库')" onerror="__ld('题库',false)"></script>
-<script defer src="assets/js/figs.js?v=20261028b" onload="__ld('原理图')" onerror="__ld('原理图',false)"></script>
-<script defer src="data/course1.js?v=20261028b" onload="__ld('第 1–4 讲')" onerror="__ld('第 1–4 讲',false)"></script>
-<script defer src="data/course2.js?v=20261028b" onload="__ld('第 5–8 讲')" onerror="__ld('第 5–8 讲',false)"></script>
-<script defer src="data/course3.js?v=20261028b" onload="__ld('第 9–10 讲')" onerror="__ld('第 9–10 讲',false)"></script>
-<script defer src="data/course4.js?v=20261028b" onload="__ld('第 11–13 讲')" onerror="__ld('第 11–13 讲',false)"></script>
-<script defer src="data/timing.js?v=20261028b" onload="__ld('配音时长')" onerror="__ld('配音时长',false)"></script>
-<script defer src="data/examobj.js?v=20261028b" onload="__ld('期末题库')" onerror="__ld('期末题库',false)"></script>
-<script defer src="assets/js/core.js?v=20261028b" onload="__ld('内核')" onerror="__ld('内核',false)"></script>
-<script defer src="assets/js/player.js?v=20261028b" onload="__ld('播放器')" onerror="__ld('播放器',false)"></script>
-<script defer src="assets/js/pages.js?v=20261028b" onload="__ld('页面')" onerror="__ld('页面',false)"></script>
+<script defer src="data/bank.js?v=20261028c" onload="__ld('题库')" onerror="__ld('题库',false)"></script>
+<script defer src="assets/js/figs.js?v=20261028c" onload="__ld('原理图')" onerror="__ld('原理图',false)"></script>
+<script defer src="data/course1.js?v=20261028c" onload="__ld('第 1–4 讲')" onerror="__ld('第 1–4 讲',false)"></script>
+<script defer src="data/course2.js?v=20261028c" onload="__ld('第 5–8 讲')" onerror="__ld('第 5–8 讲',false)"></script>
+<script defer src="data/course3.js?v=20261028c" onload="__ld('第 9–10 讲')" onerror="__ld('第 9–10 讲',false)"></script>
+<script defer src="data/course4.js?v=20261028c" onload="__ld('第 11–13 讲')" onerror="__ld('第 11–13 讲',false)"></script>
+<script defer src="data/timing.js?v=20261028c" onload="__ld('配音时长')" onerror="__ld('配音时长',false)"></script>
+<script defer src="data/examobj.js?v=20261028c" onload="__ld('期末题库')" onerror="__ld('期末题库',false)"></script>
+<script defer src="assets/js/core.js?v=20261028c" onload="__ld('内核')" onerror="__ld('内核',false)"></script>
+<script defer src="assets/js/player.js?v=20261028c" onload="__ld('播放器')" onerror="__ld('播放器',false)"></script>
+<script defer src="assets/js/pages.js?v=20261028c" onload="__ld('页面')" onerror="__ld('页面',false)"></script>
 </body>
 </html>
