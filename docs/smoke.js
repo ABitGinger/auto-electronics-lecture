@@ -179,8 +179,11 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
     const opts = d.querySelectorAll('#exList .qopt');
     if (opts.length < 140) throw new Error('客观选项不足 ' + opts.length);
     const stems = d.querySelectorAll('#exList .stem');
-    if (stems.length !== 35) throw new Error('题干数量 ' + stems.length);
-    if (stems[0].textContent.length < 12) throw new Error('题干为空');
+    if (stems.length !== 35) throw new Error('主观题干数量 ' + stems.length);
+    if (stems[0].textContent.length < 12) throw new Error('主观题干为空');
+    const asks = d.querySelectorAll('#exList .qask');
+    if (asks.length !== 35) throw new Error('客观题干数量 ' + asks.length);
+    asks.forEach(a => { if (a.textContent.trim().length < 6) throw new Error('客观题干为空'); });
   });
   step('交卷后生成报告', () => {
     const rows = Array.prototype.slice.call(d.querySelectorAll('#exList .exq2'), 0, 3);

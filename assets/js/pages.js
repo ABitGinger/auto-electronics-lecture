@@ -64,22 +64,22 @@
         '<span class="meta">' + (q.marks || '') + ' 分 · ' + (q.from || '') + (L ? ' · 见 ' + L.id : '') + '</span></span>' +
         '<span class="st" data-st="' + q.id + '">未答</span><span class="cv">▸</span></div>' +
         '<div class="bd" hidden>' +
-        // 题干（主观题要答的原题）
-        '<div class="stem"><b>题干</b>' + (q.stem || '') + '</div>' +
-        // 客观小问
-        '<div class="objq">客观小问（4 选 1）</div>' +
+        // 客观小问：先给题干，再给选项
+        '<div class="objq">客观小问 · 4 选 1</div>' +
+        '<div class="qask">' + (o.ask || '（本题暂无客观小问）') + '</div>' +
         '<div class="qopt-list" data-obj="' + q.id + '">' +
         (o.opts || []).map(function (x, k) {
           return '<button class="qopt' + (a.obj === k ? ' sel' : '') + '" data-k="' + k + '"><span class="k">' + 'ABCD'[k] + '</span><span>' + x + '</span></button>';
         }).join('') + '</div>' +
         '<div class="objfb" data-objfb="' + q.id + '">' + (a.obj != null ? '已选 ' + 'ABCD'[a.obj] + '　（交卷后统一判分）' : '点一个选项') + '</div>' +
-        // 主观作答
-        '<div class="objq" style="margin-top:14px">主观作答：写出要点，用分号分隔</div>' +
+        // 主观题：原题题干 + 作答
+        '<div class="objq" style="margin-top:16px">主观题 · 原题</div>' +
+        '<div class="stem">' + (q.stem || '') + '</div>' +
         '<textarea data-txt="' + q.id + '" placeholder="例：分两类（模拟/数字）→ 模拟先调理再 A/D → 开关量电平变换与去抖 → 脉冲整形去负压 → 频率量用定时器">' + (a.txt || '') + '</textarea>' +
         '<div class="ptlist" data-chips="' + q.id + '">' + (q.points || []).map(function (x, k) {
           return '<div class="pt" data-p="' + k + '"><i>✓</i><span>' + TK.strip(x) + '</span></div>';
         }).join('') + '</div>' +
-        '<div class="objfb" style="color:var(--dim2)">评分关键词：' + (q.keys || []).join(' / ') + '</div>' +
+        '<div class="objfb dim">评分关键词：' + (q.keys || []).join(' / ') + '</div>' +
         '</div></div>';
     }).join('');
 

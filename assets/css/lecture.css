@@ -343,9 +343,10 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
 .exq2 .hd .st.done{color:var(--gr)}
 .exq2 .hd .cv{font-size:10px;color:var(--dim2);transition:transform .18s;flex:none}
 .exq2.open .hd .cv{transform:rotate(90deg)}
-.exq2 .stem{margin:12px 0 2px;padding:10px 12px;border-left:2px solid var(--or);border-radius:0 8px 8px 0;
+.exq2 .qask{margin:2px 0 9px;font-size:14px;line-height:1.7;color:var(--ink)}
+.exq2 .stem{margin:2px 0 10px;padding:10px 12px;border-left:2px solid var(--or);border-radius:0 8px 8px 0;
   background:rgba(251,146,60,.07);font-size:13.5px;line-height:1.75;color:var(--ink)}
-.exq2 .stem b{display:block;margin-bottom:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--or)}
+.objfb.dim{color:var(--dim2)}
 .exq2 .objq{margin:12px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim)}
 .qopt-list{display:grid;gap:7px}
 .qopt.sel{border-color:var(--cy);background:rgba(34,211,238,.13);color:var(--ink)}
