@@ -139,15 +139,62 @@
   }
 
   /* ---------------- 音频与时间 ---------------- */
+  var bufTimer = null;
+  function showBuffer(txt) {
+    var b = $('#buffer'); if (!b) return;
+    $('#bufferTxt').textContent = txt || '缓冲中…';
+    b.classList.remove('slow'); b.hidden = false;
+    clearTimeout(bufTimer);
+    bufTimer = setTimeout(function () {
+      b.classList.add('slow');
+      $('#bufferTxt').textContent = '网络较慢，仍在加载…';
+    }, 4500);
+  }
+  function hideBuffer() {
+    var b = $('#buffer'); if (b) b.hidden = true;
+    clearTimeout(bufTimer);
+  }
+  TK.showBuffer = showBuffer; TK.hideBuffer = hideBuffer;
+
+  function onAudioError() {
+    var seg = TK.segs[ST.i];
+    if (!seg || !seg.file || ST.silent) return;
+    ST.silent = true;
+    hideBuffer();
+    TK.toast('配音没加载出来，本节按文字节奏继续（可稍后回看）', 'bad');
+  }
+
   function ensureAudio() {
     if (A) return A;
     A = new Audio();
     A.preload = 'auto';
     A.muted = !!S.muted;
     A.addEventListener('play', function () { ST.playing = true; });
-    A.addEventListener('pause', function () { if (!ST.seeking) { } });
+    A.addEventListener('waiting', function () { if (ST.playing) showBuffer(); });
+    A.addEventListener('stalled', function () { if (ST.playing) showBuffer('网络中断，重试中…'); });
+    A.addEventListener('playing', hideBuffer);
+    A.addEventListener('canplay', hideBuffer);
+    A.addEventListener('error', onAudioError);
     return A;
   }
+
+  /* 预加载后两段，切换时几乎无等待 */
+  var pre = {};
+  function preloadAhead(i) {
+    [i + 1, i + 2].forEach(function (k) {
+      var sg = TK.segs[k];
+      if (!sg || !sg.file || pre[k]) return;
+      var a = new Audio();
+      a.preload = 'auto';
+      a.src = sg.file;
+      pre[k] = a;
+    });
+    Object.keys(pre).forEach(function (k) {
+      var n = +k;
+      if (n < i - 1 || n > i + 3) { try { pre[n].src = ''; } catch (e) { } delete pre[n]; }
+    });
+  }
+  TK.preloadAhead = preloadAhead;
 
   function loadSeg(seg, off) {
     var a = ensureAudio();
@@ -201,6 +248,7 @@
     render(seg, L);
     if (changed && $('#side').innerHTML) renderSide();
     loadSeg(seg, off || 0);
+    preloadAhead(i);
     $('#deck').scrollTop = 0;
     S.pos = seg.start + (off || 0); TK.save();
     if (autoplay) play(); else { pause(true); }
@@ -517,7 +565,11 @@
     $('#sheetX').addEventListener('click', function () { $('#sheet').hidden = true; });
     $('#sheetCopy').addEventListener('click', copyLesson);
     $('#btnCopy').addEventListener('click', copyLesson);
-    $('#btnSide').addEventListener('click', function () { $('#side').classList.toggle('open'); });
+    $('#btnSide').addEventListener('click', function () {
+      if (window.innerWidth <= 820) { openMenu(); return; }
+      var ar = $('.arena');
+      ar.classList.toggle('open');
+    });
     $('#pResume').addEventListener('click', togglePause);
     $('#pCopy').addEventListener('click', copyLesson);
     $('#pSheet').addEventListener('click', function () { $('#pause').hidden = true; TK.setPaused(false); play(); openSheet(); });

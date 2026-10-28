@@ -243,6 +243,27 @@
     $('#bootMin').textContent = mins;
     $('#bootSeg').textContent = TK.segs.length;
 
+    // 启动页后台预热首段 + 第二段配音（弱网下先攒一点，点开始就能出声）
+    (function warm() {
+      var s0 = TK.segs[0];
+      if (!s0 || !s0.file) return;
+      var t0 = Date.now(), a = new Audio();
+      a.preload = 'auto';
+      a.src = s0.file;
+      a.addEventListener('canplaythrough', function () {
+        var tip = $('#bootTip');
+        if (tip) tip.innerHTML = '首段配音已就绪（' + ((Date.now() - t0) / 1000).toFixed(1) + ' 秒）· 共 <b>' + mins + '</b> 分钟 · <b>' + TK.segs.length + '</b> 段';
+      }, { once: true });
+      a.addEventListener('error', function () {
+        var tip = $('#bootTip');
+        if (tip) tip.textContent = '首发配音加载较慢，开始后会边播边缓存';
+      }, { once: true });
+      setTimeout(function () {
+        var s1 = TK.segs[1];
+        if (s1 && s1.file) { var b = new Audio(); b.preload = 'auto'; b.src = s1.file; }
+      }, 600);
+    })();
+
     var pos = 0;
     if (S.pos > 25 && S.pos < TK.total - 8) pos = S.pos;
     if (pos) {

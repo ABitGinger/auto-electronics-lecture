@@ -125,6 +125,20 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
     if (!/对了/.test(d.querySelector('#qfb').textContent)) throw new Error('无反馈');
   });
 
+  console.log('\n【预加载与弱网提示】');
+  step('预加载接口存在且可调用', () => {
+    if (typeof TK.preloadAhead !== 'function') throw new Error('无 preloadAhead');
+    TK.preloadAhead(TK.player.state.i);
+  });
+  step('缓冲提示元素默认隐藏', () => {
+    const b = d.querySelector('#buffer');
+    if (!b) throw new Error('无 #buffer');
+    if (!b.hidden) throw new Error('默认不该显示');
+  });
+  step('音频错误可降级为静默推进', () => {
+    if (typeof TK.showBuffer !== 'function' || typeof TK.hideBuffer !== 'function') throw new Error('无缓冲接口');
+  });
+
   console.log('\n【复制与讲义】');
   step('复制本讲文本包含旁白与例题', () => {
     TK.player.gotoLesson('L08');

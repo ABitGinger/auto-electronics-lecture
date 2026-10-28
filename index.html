@@ -2,7 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#080c12" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <title>汽车电子控制技术 · 精讲课</title>
 <meta name="description" content="面向零基础的汽车电子控制技术精讲课：13 讲配音讲解、课中 QTE、课末接题库原题、暂停可复制、期末 35 题全量考核。" />
 <link rel="stylesheet" href="assets/css/lecture.css" />
@@ -38,8 +41,8 @@
       <span class="mono dim" id="barCount">1 / 6</span>
       <button class="ib" id="btnMute" title="静音（N）">🔊</button>
       <button class="ib" id="btnSpeed" title="语速（P）">1.0×</button>
-      <button class="ib" id="btnSheet" title="本讲讲义（S）">讲义</button>
-      <a class="ib" href="#/exam" title="期末全量考核">期末</a>
+      <button class="ib" id="btnSheet" title="本讲讲义（S）"><span class="ic">📄</span><span class="lbl">讲义</span></button>
+      <a class="ib" href="#/exam" title="期末全量考核"><span class="ic">🎯</span><span class="lbl">期末</span></a>
     </div>
   </header>
 
@@ -52,6 +55,8 @@
       <div class="tl-tip" id="tlTip"></div>
     </div>
   </div>
+
+  <div class="buffer" id="buffer" hidden><i></i><span id="bufferTxt">缓冲中…</span></div>
 
   <main class="arena">
     <aside class="side" id="side"></aside>
@@ -70,8 +75,8 @@
       <span class="mono dim" id="tAll">00:00</span>
     </div>
     <div class="ctrl-r">
-      <button class="cb" id="btnCopy" title="复制本讲为文本（C）">⧉ 复制本讲</button>
-      <button class="cb" id="btnExam2" title="期末全量考核">🎯 期末</button>
+      <button class="cb" id="btnCopy" title="复制本讲为文本（C）"><span class="ic">⧉</span><span class="lbl">复制本讲</span></button>
+      <button class="cb" id="btnExam2" title="期末全量考核"><span class="ic">🎯</span><span class="lbl">期末</span></button>
     </div>
   </footer>
 </div>

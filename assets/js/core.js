@@ -188,6 +188,27 @@
   TK.strip = function (s) { return String(s == null ? '' : s).replace(/<[^>]+>/g, ''); };
   TK.esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); };
 
+  /* ---------- 触摸/点击反馈 ---------- */
+  function haptic(ms) {
+    try { if (navigator.vibrate) navigator.vibrate(ms || 8); } catch (e) { }
+  }
+  TK.haptic = haptic;
+
+  document.addEventListener('pointerdown', function (e) {
+    var t = e.target && e.target.closest && e.target.closest('.cb,.ib,.btn,.bigbtn,.qopt,.mrow,.les');
+    if (!t || t.disabled) return;
+    haptic(7);
+    var r = t.getBoundingClientRect();
+    var d = Math.max(r.width, r.height) * 1.6;
+    var sp = document.createElement('span');
+    sp.className = 'tap-ring';
+    sp.style.width = sp.style.height = d + 'px';
+    sp.style.left = (e.clientX - r.left) + 'px';
+    sp.style.top = (e.clientY - r.top) + 'px';
+    t.appendChild(sp);
+    setTimeout(function () { sp.remove(); }, 480);
+  }, { passive: true });
+
   TK.init = function () {
     initFx();
     $('#modalX').addEventListener('click', function () { $('#modal').hidden = true; });
