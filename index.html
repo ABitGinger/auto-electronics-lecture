@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>汽车电子控制技术 · 精讲课</title>
+<meta name="description" content="面向零基础的汽车电子控制技术精讲课：13 讲配音讲解、课中 QTE、课末接题库原题、暂停可复制、期末 35 题全量考核。" />
+<link rel="stylesheet" href="assets/css/lecture.css" />
+</head>
+<body>
+
+<!-- ============ 启动页 ============ -->
+<div class="boot" id="boot">
+  <div class="boot-in">
+    <div class="boot-eyebrow">汽车电子控制技术</div>
+    <h1>精讲课</h1>
+    <p class="boot-sub">13 讲 · 全程配音 · 零基础从头讲起</p>
+    <ul class="boot-list">
+      <li><b>先讲知识，再碰题目</b>　每一讲把概念讲透，课末才把题库原题拿出来示范怎么答</li>
+      <li><b>课中 QTE</b>　讲到关键处会停下来问你一句，8 秒内作答，答错也继续讲</li>
+      <li><b>随时暂停</b>　空格暂停，倒计时一起冻结；暂停页可一键复制整讲文本去问 AI</li>
+    </ul>
+    <button class="bigbtn" id="bootGo">开始第 1 讲　▶</button>
+    <p class="boot-tip" id="bootTip">共 <b id="bootMin">—</b> 分钟 · <b id="bootSeg">—</b> 个讲解段落</p>
+  </div>
+</div>
+
+<!-- ============ 主界面 ============ -->
+<div class="app" id="app" hidden>
+
+  <header class="bar">
+    <button class="ib" id="btnSide" title="课程目录（M）">☰</button>
+    <div class="bar-title">
+      <span class="chip" id="chChip">第一讲</span>
+      <b id="barTitle">汽车电子系统的骨架</b>
+    </div>
+    <div class="bar-right">
+      <span class="mono dim" id="barCount">1 / 6</span>
+      <button class="ib" id="btnMute" title="静音（N）">🔊</button>
+      <button class="ib" id="btnSpeed" title="语速（P）">1.0×</button>
+      <button class="ib" id="btnSheet" title="本讲讲义（S）">讲义</button>
+      <a class="ib" href="#/exam" title="期末全量考核">期末</a>
+    </div>
+  </header>
+
+  <!-- 连续时间轴：整门课一条，可拖动 -->
+  <div class="tl" id="tl">
+    <div class="tl-track" id="tlTrack">
+      <div class="tl-marks" id="tlMarks"></div>
+      <div class="tl-fill" id="tlFill"></div>
+      <div class="tl-knob" id="tlKnob"></div>
+      <div class="tl-tip" id="tlTip"></div>
+    </div>
+  </div>
+
+  <main class="arena">
+    <aside class="side" id="side"></aside>
+    <section class="deck" id="deck"></section>
+  </main>
+
+  <footer class="ctrl">
+    <div class="ctrl-l">
+      <button class="cb" id="btnPrev" title="上一段（←）">‹</button>
+      <button class="cb main" id="btnPlay" title="播放 / 暂停（空格）">❚❚</button>
+      <button class="cb" id="btnNext" title="下一段（→）">›</button>
+    </div>
+    <div class="ctrl-m">
+      <span class="mono" id="tNow">00:00</span>
+      <span class="ctrl-meta" id="tMeta">—</span>
+      <span class="mono dim" id="tAll">00:00</span>
+    </div>
+    <div class="ctrl-r">
+      <button class="cb" id="btnCopy" title="复制本讲为文本（C）">⧉ 复制本讲</button>
+      <button class="cb" id="btnExam2" title="期末全量考核">🎯 期末</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ 暂停 ============ -->
+<div class="pause" id="pause" hidden>
+  <div class="pause-card">
+    <div class="eyebrow">PAUSED</div>
+    <h2>已暂停</h2>
+    <p class="pause-sub">配音、字幕、答题倒计时全部冻结，回来继续就行。</p>
+    <div class="pause-acts">
+      <button class="btn primary" id="pResume">继续播放（空格）</button>
+      <button class="btn" id="pCopy">⧉ 复制本讲为文本</button>
+      <button class="btn ghost" id="pSheet">看讲义</button>
+    </div>
+    <p class="pause-note">复制内容＝本讲全部旁白、要点、图的文字描述、课中提问与例题答案，可整段粘给外部 AI 提问。</p>
+  </div>
+</div>
+
+<!-- ============ 讲义 ============ -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-card">
+    <div class="sheet-hd"><b id="sheetTitle">讲义</b><div><button class="btn sm" id="sheetCopy">复制</button><button class="ib" id="sheetX">✕</button></div></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<!-- ============ 目录 ============ -->
+<div class="menu" id="menu" hidden>
+  <div class="menu-card">
+    <div class="sheet-hd"><b>课程目录 · 13 讲</b><button class="ib" id="menuX">✕</button></div>
+    <div class="menu-body" id="menuBody"></div>
+  </div>
+</div>
+
+<!-- ============ 复制结果 ============ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card">
+    <div class="sheet-hd"><b id="modalT">复制文本</b><button class="ib" id="modalX">✕</button></div>
+    <textarea id="modalText" readonly></textarea>
+    <div class="row-end"><span class="copied" id="copied">已复制 ✓</span><button class="btn primary" id="modalCopy">复制到剪贴板</button></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<canvas class="fx" id="fx"></canvas>
+
+<script>window.TK = { bank: [], figs: {}, course: [], timing: {}, examObj: {} };</script>
+<script src="data/bank.js"></script>
+<script src="assets/js/figs.js"></script>
+<script src="data/course1.js"></script>
+<script src="data/course2.js"></script>
+<script src="data/course3.js"></script>
+<script src="data/course4.js"></script>
+<script src="data/timing.js"></script>
+<script src="data/examobj.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/player.js"></script>
+<script src="assets/js/pages.js"></script>
+</body>
+</html>
