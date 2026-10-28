@@ -111,6 +111,13 @@ python build/make_lecture_full.py
 - **缓冲提示**：音频 `waiting/stalled` 时右上角出现「缓冲中…」，超过 4.5 秒变「网络较慢，仍在加载…」；`playing/canplay` 自动收起。
 - **弱网降级**：音频加载失败时自动改为按估算时长推进文字（不卡死），并提示「本节按文字节奏继续」。
 
+### 在微信里打开会看到「请在浏览器中打开」
+
+WorkBuddy 托管域名（`*.app.workbuddy.host`）对微信内置浏览器做了 UA 拦截：带 `MicroMessenger` 的请求直接返回 **403 + 提示页**，这是平台策略，不是本项目代码。
+
+- 想发给别人在微信里直接看 → 用 GitHub Pages 地址 `https://abitginger.top/auto-electronics-lecture/`（实测微信 UA 返回 200，正常渲染）。
+- 一定要用托管地址 → 让对方点「复制链接」后在 Safari / Chrome 打开。
+
 ### 部署
 
 - 仓库：`ABitGinger/auto-electronics-lecture`，Pages 从 `main` 分支根目录发布，自定义域名 `abitginger.top`。
