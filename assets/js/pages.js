@@ -47,7 +47,9 @@
       '<div class="kpi"><div><b>35</b><span>题量</span></div><div><b>35</b><span>客观小问</span></div><div><b>35</b><span>主观作答</span></div><div><b id="exDone">0</b><span>已完成</span></div></div>' +
       '<div class="row-end" style="justify-content:flex-start;margin-bottom:14px">' +
       '<a class="btn" href="#/play">← 回到课程</a>' +
-      '<a class="btn ghost" href="#/overview">课程与题库概览</a><span style="flex:1"></span>' +
+      '<a class="btn ghost" href="#/overview">课程与题库概览</a>' +
+      '<button class="btn ghost" id="exExpand">展开全部</button>' +
+      '<span style="flex:1"></span>' +
       '<button class="btn primary" id="exSubmit">交卷并生成报告</button></div>' +
       '<div id="exList"></div>' +
       '<div class="row-end" style="margin:20px 0 60px"><button class="btn primary" id="exSubmit2">交卷并生成报告</button></div>';
@@ -59,27 +61,50 @@
       var L = lessonOfQ(q.id);
       return '<div class="exq2" data-q="' + q.id + '">' +
         '<div class="hd"><span class="id">' + q.id + '</span><span class="t">' + (i + 1) + '. ' + q.title +
-        '<span style="color:var(--dim2);font-size:11.5px">　' + (q.marks || '') + ' 分　' + (L ? '见 ' + L.id + ' ' + L.title : '') + '</span></span>' +
-        '<span class="st" data-st="' + q.id + '">' + (a.obj != null ? '客观已答' : '未答') + '</span></div>' +
+        '<span class="meta">' + (q.marks || '') + ' 分 · ' + (q.from || '') + (L ? ' · 见 ' + L.id : '') + '</span></span>' +
+        '<span class="st" data-st="' + q.id + '">未答</span><span class="cv">▸</span></div>' +
         '<div class="bd" hidden>' +
-        '<div style="font-size:12.5px;color:var(--dim);margin-top:10px">客观：' + o.ask + '</div>' +
-        '<div class="qte-opts" data-obj="' + q.id + '" style="display:grid;gap:7px;margin-top:8px">' +
+        // 题干（主观题要答的原题）
+        '<div class="stem"><b>题干</b>' + (q.stem || '') + '</div>' +
+        // 客观小问
+        '<div class="objq">客观小问（4 选 1）</div>' +
+        '<div class="qopt-list" data-obj="' + q.id + '">' +
         (o.opts || []).map(function (x, k) {
           return '<button class="qopt' + (a.obj === k ? ' sel' : '') + '" data-k="' + k + '"><span class="k">' + 'ABCD'[k] + '</span><span>' + x + '</span></button>';
         }).join('') + '</div>' +
-        '<div style="font-size:12.5px;color:var(--dim);margin-top:14px">主观作答（写出要点即可，用分号分隔）：</div>' +
-        '<textarea data-txt="' + q.id + '" placeholder="例：进气量测量 → 按目标空燃比算喷油量 → 按转速负荷算提前角……">' + (a.txt || '') + '</textarea>' +
-        '<div class="chips" data-chips="' + q.id + '">' + (q.points || []).map(function (x, k) {
-          return '<span class="chip2" data-p="' + k + '">' + TK.strip(x) + '</span>';
+        '<div class="objfb" data-objfb="' + q.id + '">' + (a.obj != null ? '已选 ' + 'ABCD'[a.obj] + '　（交卷后统一判分）' : '点一个选项') + '</div>' +
+        // 主观作答
+        '<div class="objq" style="margin-top:14px">主观作答：写出要点，用分号分隔</div>' +
+        '<textarea data-txt="' + q.id + '" placeholder="例：分两类（模拟/数字）→ 模拟先调理再 A/D → 开关量电平变换与去抖 → 脉冲整形去负压 → 频率量用定时器">' + (a.txt || '') + '</textarea>' +
+        '<div class="ptlist" data-chips="' + q.id + '">' + (q.points || []).map(function (x, k) {
+          return '<div class="pt" data-p="' + k + '"><i>✓</i><span>' + TK.strip(x) + '</span></div>';
         }).join('') + '</div>' +
-        '<div style="margin-top:8px;font-size:11.5px;color:var(--dim2)">评分关键词：' + (q.keys || []).join(' / ') + '</div>' +
+        '<div class="objfb" style="color:var(--dim2)">评分关键词：' + (q.keys || []).join(' / ') + '</div>' +
         '</div></div>';
     }).join('');
+
+    function statusOf(qid) {
+      var a = ans[qid] || {};
+      var len = (a.txt || '').trim().length;
+      if (a.obj == null && !len) return '未答';
+      if (a.obj != null && len > 6) return '已完成';
+      if (a.obj != null) return '客观已答 · 待写主观';
+      return '已写 ' + len + ' 字 · 未选客观';
+    }
+    function refreshStatus(qid) {
+      var el = $('[data-st="' + qid + '"]');
+      if (!el) return;
+      el.textContent = statusOf(qid);
+      el.classList.toggle('done', statusOf(qid) === '已完成');
+    }
 
     list.querySelectorAll('.exq2').forEach(function (box) {
       var qid = box.getAttribute('data-q');
       var q = TK.bankOf(qid);
-      $('.hd', box).addEventListener('click', function () { var b = $('.bd', box); b.hidden = !b.hidden; });
+      $('.hd', box).addEventListener('click', function () {
+        var b = $('.bd', box); b.hidden = !b.hidden;
+        box.classList.toggle('open', !b.hidden);
+      });
       var objBox = $('[data-obj="' + qid + '"]', box);
       objBox.querySelectorAll('.qopt').forEach(function (b) {
         b.addEventListener('click', function () {
@@ -87,8 +112,10 @@
           b.classList.add('sel');
           ans[qid] = ans[qid] || {}; ans[qid].obj = +b.getAttribute('data-k');
           S.examAns = ans; TK.save();
-          $('[data-st="' + qid + '"]', box).textContent = '客观已答';
-          refresh();
+          var fb = $('[data-objfb="' + qid + '"]', box);
+          if (fb) fb.textContent = '已选 ' + 'ABCD'[ans[qid].obj] + '　（交卷后统一判分）';
+          refreshStatus(qid); refresh();
+          if (TK.sfx) TK.sfx('click');
         });
       });
       var ta = $('[data-txt="' + qid + '"]', box);
@@ -96,13 +123,14 @@
         ans[qid] = ans[qid] || {}; ans[qid].txt = ta.value;
         S.examAns = ans; TK.save();
         var c = cover(ta.value, q.keys);
-        $('[data-chips="' + qid + '"]', box).querySelectorAll('.chip2').forEach(function (ch, i) {
+        $('[data-chips="' + qid + '"]', box).querySelectorAll('.pt').forEach(function (ch) {
           var txt = norm(ch.getAttribute('data-p'));
           var hit = c.hit.some(function (k) { return txt.indexOf(norm(k)) >= 0; });
           ch.classList.toggle('hit', hit);
         });
-        refresh();
+        refreshStatus(qid); refresh();
       });
+      refreshStatus(qid);
     });
 
     function countDone() {
@@ -331,6 +359,15 @@
         if ((demo === 'qte' || demo === 'ex' || demo === 'sum') && seek) { }
         if (demo === 'boot') location.reload();
         if (demo === 'exam') location.hash = '#/exam';
+        if (demo === 'examopen') {
+          location.hash = '#/exam';
+          setTimeout(function () {
+            var h = document.querySelector('#exList .exq2 .hd');
+            if (h) h.click();
+            var o = document.querySelector('#exList .qopt');
+            if (o) o.click();
+          }, 500);
+        }
         if (demo === 'overview') location.hash = '#/overview';
         if (demo === 'pause') setTimeout(function () { TK.player.toggle(); }, 500);
         if (demo === 'sheet') setTimeout(function () { TK.player.openSheet(); }, 500);

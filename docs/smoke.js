@@ -178,7 +178,19 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
     if (rows.length !== 35) throw new Error('只有 ' + rows.length + ' 题');
     const opts = d.querySelectorAll('#exList .qopt');
     if (opts.length < 140) throw new Error('客观选项不足 ' + opts.length);
+    const stems = d.querySelectorAll('#exList .stem');
+    if (stems.length !== 35) throw new Error('题干数量 ' + stems.length);
+    if (stems[0].textContent.length < 12) throw new Error('题干为空');
   });
+  step('交卷后生成报告', () => {
+    const rows = Array.prototype.slice.call(d.querySelectorAll('#exList .exq2'), 0, 3);
+    rows.forEach(r => { const o = r.querySelector('.qopt'); if (o) o.click(); });
+    d.querySelector('#exSubmit').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    const txt = d.querySelector('#pageLayer').textContent;
+    if (txt.indexOf('考核报告') < 0) throw new Error('没有出报告');
+    if (txt.indexOf('逐题结果') < 0) throw new Error('报告缺少逐题结果');
+  });
+
   w.location.hash = '#/overview';
   await sleep(400);
   step('概览包含 13 讲与 35 题矩阵', () => {

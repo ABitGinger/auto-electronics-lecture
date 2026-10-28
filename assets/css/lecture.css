@@ -337,6 +337,27 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
 /* 加载中的按钮 */
 .bigbtn[disabled]{opacity:.75;cursor:progress}
 
+/* 期末卷：题干 / 客观选项 / 反馈 */
+.exq2 .hd .t{display:block}
+.exq2 .hd .t .meta{display:block;margin-top:2px;font-size:11px;color:var(--dim2);font-weight:400}
+.exq2 .hd .st.done{color:var(--gr)}
+.exq2 .hd .cv{font-size:10px;color:var(--dim2);transition:transform .18s;flex:none}
+.exq2.open .hd .cv{transform:rotate(90deg)}
+.exq2 .stem{margin:12px 0 2px;padding:10px 12px;border-left:2px solid var(--or);border-radius:0 8px 8px 0;
+  background:rgba(251,146,60,.07);font-size:13.5px;line-height:1.75;color:var(--ink)}
+.exq2 .stem b{display:block;margin-bottom:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--or)}
+.exq2 .objq{margin:12px 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim)}
+.qopt-list{display:grid;gap:7px}
+.qopt.sel{border-color:var(--cy);background:rgba(34,211,238,.13);color:var(--ink)}
+.qopt.sel .k{background:var(--cy);color:#04121b}
+.objfb{margin-top:8px;min-height:1.4em;font-size:12px;color:var(--cy)}
+.ptlist{margin-top:10px;display:grid;gap:4px}
+.pt{display:flex;gap:8px;font-size:11.5px;line-height:1.6;color:var(--dim2)}
+.pt i{flex:none;width:14px;height:14px;margin-top:2px;border-radius:4px;border:1px solid var(--line2);
+  font-style:normal;font-size:9px;display:grid;place-items:center;color:transparent}
+.pt.hit{color:var(--ink2)}
+.pt.hit i{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.6);color:var(--gr)}
+
 /* ============================================================
    移动端
    ============================================================ */
