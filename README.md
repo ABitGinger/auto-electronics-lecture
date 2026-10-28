@@ -2,7 +2,8 @@
 
 面向**零基础**的网页版讲解课：13 讲、98 个讲解段落、约 **50 分钟中文配音**，讲知识点 → 课中 QTE 停下来问一句 → 课末引出题库原题。
 
-打开 `index.html` 即可（建议 Chrome / Edge；用 `python -m http.server` 打开则进度可持久保存）。
+**线上版：https://abitginger.top/auto-electronics-lecture/**（手机可直接打开，已做移动端适配）
+本地也可以直接双击 `index.html`（用 `python -m http.server` 打开则进度可持久保存）。
 
 ---
 
@@ -93,3 +94,21 @@ python build/make_lecture_full.py
 - 讲稿面向零基础重写，不复用「题库解析」的写法：先建立概念，再落到题目。
 - 题库 35 道大题**每题都在某一讲的课末作为例题出现**，讲义与答案骨架与题库评分要点一致。
 - 视频版与网页版共用同一套讲稿与配音，内容完全一致；视频版把 QTE 做成「8 秒倒计时 + 答案卡」。
+
+
+---
+
+## 八、移动端与弱网
+
+- **布局**：≤820px 切单列、目录改为浮层、底部只留图标按钮、字幕固定在底部、正文区可滚动；高度用 `100dvh`，避开地址栏伸缩；适配刘海安全区。
+- **点击反馈**：所有按钮有按压缩放 + 涟漪，移动端带 7ms 振动；进度条 `touch-action:none`，手指拖动不会误触页面滚动。
+- **预加载**：进入某段后自动预取后两段音频；启动页在后台预热第 1、2 段，并在按钮下显示「首段配音已就绪（x.x 秒）」。
+- **缓冲提示**：音频 `waiting/stalled` 时右上角出现「缓冲中…」，超过 4.5 秒变「网络较慢，仍在加载…」；`playing/canplay` 自动收起。
+- **弱网降级**：音频加载失败时自动改为按估算时长推进文字（不卡死），并提示「本节按文字节奏继续」。
+
+### 部署
+
+- 仓库：`ABitGinger/auto-electronics-lecture`，Pages 从 `main` 分支根目录发布，自定义域名 `abitginger.top`。
+- 站点地址：`https://abitginger.top/auto-electronics-lecture/`（账号级自定义域名生效后，`ABitGinger.github.io/auto-electronics-lecture` 会 404，属正常）。
+- 缓存：Pages 对 HTML 约 10 分钟、JS/CSS 约 4 小时。改前端后把 `index.html` 里资源引用的 `?v=` 改一个值再推，能立刻绕过旧缓存。
+- 更新流程：`git add -A && git commit -m "..." && git -c http.sslVerify=false push origin main`（本机加速器改写了 hosts，API 用不了，git 通道正常）。
