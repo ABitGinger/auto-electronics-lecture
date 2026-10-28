@@ -242,6 +242,8 @@
     var mins = Math.ceil(TK.total / 60);
     $('#bootMin').textContent = mins;
     $('#bootSeg').textContent = TK.segs.length;
+    var bt = $('#bootTip');
+    if (bt) bt.hidden = false;
 
     // 启动页后台预热首段 + 第二段配音（弱网下先攒一点，点开始就能出声）
     (function warm() {
@@ -266,15 +268,26 @@
 
     var pos = 0;
     if (S.pos > 25 && S.pos < TK.total - 8) pos = S.pos;
+
+    // 数据齐了才放开「开始」按钮
+    if (!TK.course.length || !TK.segs.length) {
+      if (window.__ld) window.__ld('课程数据', false);
+      return;
+    }
+    var go = $('#bootGo');
+    go.disabled = false;
     if (pos) {
       var seg = TK.segs.filter(function (s) { return s.start <= pos && pos < s.start + s.dur; })[0] || TK.segs[0];
       var L = TK.course.filter(function (x) { return x.id === seg.lid; })[0];
-      $('#bootGo').textContent = '继续上次 · ' + L.title + '　▶';
+      go.textContent = '继续上次 · ' + L.title + '　▶';
       var tip = document.createElement('p');
       tip.className = 'boot-tip';
       tip.innerHTML = '上次停在 ' + TK.fmt(pos) + '　<a href="javascript:void 0" id="bootNew" style="color:var(--cy)">从头开始</a>';
-      $('#bootGo').parentNode.insertBefore(tip, $('#bootGo').nextSibling);
+      go.parentNode.insertBefore(tip, go.nextSibling);
+    } else {
+      go.textContent = '开始第 1 讲　▶';
     }
+    if (window.__ldDone) window.__ldDone();
 
     function start(at) {
       $('#boot').style.opacity = 0;

@@ -8,11 +8,56 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <title>汽车电子控制技术 · 精讲课</title>
 <meta name="description" content="面向零基础的汽车电子控制技术精讲课：13 讲配音讲解、课中 QTE、课末接题库原题、暂停可复制、期末 35 题全量考核。" />
-<link rel="stylesheet" href="assets/css/lecture.css?v=20261028" />
+
+<!-- 关键 CSS 内联：保证打开第一帧就是深色加载页，不会白屏 -->
+<style>
+  html,body{margin:0;height:100%;background:#080c12;color:#e8eff9;
+    font-family:"HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif}
+  #boot{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(760px 520px at 50% 22%,rgba(34,211,238,.12),transparent 66%),#070b11}
+  .boot-in{width:min(720px,92vw);box-sizing:border-box}
+  .boot-eyebrow{font-size:11.5px;letter-spacing:.34em;color:#22d3ee;text-transform:uppercase;
+    font-family:ui-monospace,Consolas,monospace}
+  #boot h1{margin:10px 0 6px;font-size:clamp(40px,7vw,64px);line-height:1.05;letter-spacing:-.02em;
+    background:linear-gradient(96deg,#fff 12%,#9fe8f5 46%,#8ab4ff 82%);-webkit-background-clip:text;
+    background-clip:text;color:transparent}
+  .boot-sub{margin:0 0 20px;color:#b9c7da;font-size:14px}
+  .boot-list{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:10px}
+  .boot-list li{position:relative;padding-left:18px;color:#b9c7da;font-size:13.5px;line-height:1.7}
+  .boot-list b{color:#e8eff9}
+  .boot-list li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;
+    background:#22d3ee}
+  .bigbtn{border:0;cursor:pointer;font-family:inherit;font-size:16px;font-weight:700;color:#04121b;
+    padding:14px 28px;border-radius:12px;background:linear-gradient(100deg,#7ff0ff,#22d3ee 55%,#38bdf8);
+    box-shadow:0 14px 40px -12px rgba(34,211,238,.75);transition:opacity .2s,transform .16s}
+  .bigbtn[disabled]{background:#1b2735;color:#8ea3bd;cursor:progress;box-shadow:none}
+  .loadwrap{margin-top:16px;max-width:420px}
+  .loadbar{height:4px;border-radius:99px;background:#141c27;overflow:hidden}
+  .loadbar i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,#38bdf8,#22d3ee);transition:width .35s ease}
+  .loadtxt{margin-top:9px;font-size:12px;color:#7e8fa6;line-height:1.6;min-height:2.4em}
+  .loadtxt .spin{width:11px;height:11px;border-radius:50%;border:2px solid rgba(34,211,238,.25);
+    border-top-color:#22d3ee;display:inline-block;vertical-align:-1px;margin-right:7px;animation:bsp .8s linear infinite}
+  .loadtxt.slow{color:#fbbf24}
+  .loadtxt.err{color:#f87171}
+  .loadtxt a{color:#22d3ee;text-decoration:underline;cursor:pointer}
+  @keyframes bsp{to{transform:rotate(360deg)}}
+  .boot-tip{margin:12px 0 0;font-size:12px;color:#5c6b80}
+  .boot-tip b{color:#b9c7da}
+  @media(max-width:520px){
+    .boot-list{display:none}
+    .bigbtn{width:100%}
+    #boot h1{font-size:42px}
+  }
+</style>
+
+<!-- 主样式异步加载：不阻塞首帧（内联关键样式已覆盖加载页） -->
+<link rel="stylesheet" href="assets/css/lecture.css?v=20261028b" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="assets/css/lecture.css?v=20261028b" /></noscript>
 </head>
 <body>
 
-<!-- ============ 启动页 ============ -->
+<!-- ============ 启动页（先于一切脚本可见） ============ -->
 <div class="boot" id="boot">
   <div class="boot-in">
     <div class="boot-eyebrow">汽车电子控制技术</div>
@@ -23,8 +68,12 @@
       <li><b>课中 QTE</b>　讲到关键处会停下来问你一句，8 秒内作答，答错也继续讲</li>
       <li><b>随时暂停</b>　空格暂停，倒计时一起冻结；暂停页可一键复制整讲文本去问 AI</li>
     </ul>
-    <button class="bigbtn" id="bootGo">开始第 1 讲　▶</button>
-    <p class="boot-tip" id="bootTip">共 <b id="bootMin">—</b> 分钟 · <b id="bootSeg">—</b> 个讲解段落</p>
+    <button class="bigbtn" id="bootGo" disabled>正在装载…</button>
+    <div class="loadwrap" id="loadWrap">
+      <div class="loadbar"><i id="ldBar"></i></div>
+      <div class="loadtxt" id="ldTxt"><span class="spin"></span>正在连接课程数据…</div>
+    </div>
+    <p class="boot-tip" id="bootTip" hidden>共 <b id="bootMin">—</b> 分钟 · <b id="bootSeg">—</b> 个讲解段落</p>
   </div>
 </div>
 
@@ -124,17 +173,62 @@
 <div class="toasts" id="toasts"></div>
 <canvas class="fx" id="fx"></canvas>
 
-<script>window.TK = { bank: [], figs: {}, course: [], timing: {}, examObj: {} };</script>
-<script src="data/bank.js?v=20261028"></script>
-<script src="assets/js/figs.js?v=20261028"></script>
-<script src="data/course1.js?v=20261028"></script>
-<script src="data/course2.js?v=20261028"></script>
-<script src="data/course3.js?v=20261028"></script>
-<script src="data/course4.js?v=20261028"></script>
-<script src="data/timing.js?v=20261028"></script>
-<script src="data/examobj.js?v=20261028"></script>
-<script src="assets/js/core.js?v=20261028"></script>
-<script src="assets/js/player.js?v=20261028"></script>
-<script src="assets/js/pages.js?v=20261028"></script>
+<script>
+/* ---------- 装载进度：每个资源到位就推进一格 ---------- */
+window.TK = { bank: [], figs: {}, course: [], timing: {}, examObj: {} };
+(function () {
+  var TOTAL = 11, done = 0, failed = [], ready = false, t0 = Date.now(), timer;
+  var bar = document.getElementById('ldBar'), txt = document.getElementById('ldTxt');
+  function paint(msg, cls) {
+    if (bar) bar.style.width = Math.min(100, Math.round(done / TOTAL * 100)) + '%';
+    if (txt && msg) {
+      txt.className = 'loadtxt' + (cls ? ' ' + cls : '');
+      txt.innerHTML = msg;
+    }
+  }
+  window.__ld = function (name, ok) {
+    if (ready) return;
+    done++;
+    if (ok === false) {
+      failed.push(name);
+      paint('「' + name + '」加载失败　<a onclick="location.reload()">点击重试</a>', 'err');
+      return;
+    }
+    if (failed.length) return;
+    paint('<span class="spin"></span>正在装载 ' + name + ' … ' + done + ' / ' + TOTAL);
+  };
+  window.__ldDone = function () {
+    if (ready) return;
+    ready = true;
+    clearInterval(timer);
+    done = TOTAL;
+    paint('<span class="spin"></span>准备就绪');
+    var w = document.getElementById('loadWrap');
+    if (w) { w.style.transition = 'opacity .3s'; w.style.opacity = 0; setTimeout(function () { w.style.display = 'none'; }, 320); }
+  };
+  if (bar) bar.style.width = '4%';
+  /* 弱网提示：超过 5 秒还没装完，换一句话安抚 */
+  timer = setInterval(function () {
+    if (done >= TOTAL || failed.length || !txt) return;
+    var s = Math.round((Date.now() - t0) / 1000);
+    if (s >= 5) {
+      txt.className = 'loadtxt slow';
+      txt.innerHTML = '<span class="spin"></span>网络较慢，已等待 ' + s + ' 秒，正在继续装载（' + done + ' / ' + TOTAL + '）';
+    }
+  }, 1000);
+})();
+</script>
+
+<script defer src="data/bank.js?v=20261028b" onload="__ld('题库')" onerror="__ld('题库',false)"></script>
+<script defer src="assets/js/figs.js?v=20261028b" onload="__ld('原理图')" onerror="__ld('原理图',false)"></script>
+<script defer src="data/course1.js?v=20261028b" onload="__ld('第 1–4 讲')" onerror="__ld('第 1–4 讲',false)"></script>
+<script defer src="data/course2.js?v=20261028b" onload="__ld('第 5–8 讲')" onerror="__ld('第 5–8 讲',false)"></script>
+<script defer src="data/course3.js?v=20261028b" onload="__ld('第 9–10 讲')" onerror="__ld('第 9–10 讲',false)"></script>
+<script defer src="data/course4.js?v=20261028b" onload="__ld('第 11–13 讲')" onerror="__ld('第 11–13 讲',false)"></script>
+<script defer src="data/timing.js?v=20261028b" onload="__ld('配音时长')" onerror="__ld('配音时长',false)"></script>
+<script defer src="data/examobj.js?v=20261028b" onload="__ld('期末题库')" onerror="__ld('期末题库',false)"></script>
+<script defer src="assets/js/core.js?v=20261028b" onload="__ld('内核')" onerror="__ld('内核',false)"></script>
+<script defer src="assets/js/player.js?v=20261028b" onload="__ld('播放器')" onerror="__ld('播放器',false)"></script>
+<script defer src="assets/js/pages.js?v=20261028b" onload="__ld('页面')" onerror="__ld('页面',false)"></script>
 </body>
 </html>

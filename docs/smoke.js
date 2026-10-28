@@ -29,9 +29,14 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
   await sleep(900);
 
   console.log('\n【启动】');
-  step('启动页可见、按钮就绪', () => {
+  step('启动页可见、装载进度已满、按钮已解锁', () => {
     if (!d.querySelector('#boot')) throw new Error('无启动页');
-    if (!d.querySelector('#bootGo').textContent.trim()) throw new Error('按钮无文字');
+    const go = d.querySelector('#bootGo');
+    if (!go.textContent.trim()) throw new Error('按钮无文字');
+    if (go.disabled) throw new Error('按钮仍禁用');
+    const bar = d.querySelector('#ldBar');
+    if (!bar) throw new Error('无进度条');
+    if ((parseFloat(bar.style.width) || 0) < 100) throw new Error('进度未满：' + bar.style.width);
   });
   d.querySelector('#bootGo').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   await sleep(700);
